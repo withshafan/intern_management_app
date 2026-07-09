@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/intern_service.dart';
 import '../models/intern.dart';
-import 'add_intern_screen.dart';
 import 'intern_detail_screen.dart';
+import 'add_intern_screen.dart';
+import 'profile_screen.dart';
+import 'dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,9 +15,22 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final InternService _internService = InternService();
+  int _selectedIndex = 0;
+
+  // The two screens: Interns list and Profile
+  late final List<Widget> _screens;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _screens = [
+      const DashboardScreen(),
+      _buildInternListScreen(),
+      const ProfileScreen(),
+    ];
+  }
+
+  Widget _buildInternListScreen() {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Intern Management'),
@@ -111,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () => _showDeleteDialog(intern.id, intern.name),
+                    onPressed: () => _showDeleteDialog(context, intern.id, intern.name),
                   ),
                   isThreeLine: true,
                   onTap: () {
@@ -142,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showDeleteDialog(String id, String name) {
+  void _showDeleteDialog(BuildContext context, String id, String name) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -175,6 +190,40 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Text('Delete'),
           ),
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Interns',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
       ),
     );
   }

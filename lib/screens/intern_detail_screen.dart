@@ -4,6 +4,7 @@ import '../models/intern.dart';
 import '../services/task_service.dart';
 import '../models/task.dart';
 import 'add_task_screen.dart';
+import 'task_detail_screen.dart';
 
 class InternDetailScreen extends StatefulWidget {
   final Intern intern;
@@ -308,6 +309,20 @@ class _InternDetailScreenState extends State<InternDetailScreen> {
                                     ? Colors.orange
                                     : Colors.grey,
                           ),
+                          onTap: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TaskDetailScreen(
+                                  task: task,
+                                  internName: widget.intern.name,
+                                ),
+                              ),
+                            );
+                            if (result == true) {
+                              setState(() {}); 
+                            }
+                          },
                         ),
                       );
                     },
