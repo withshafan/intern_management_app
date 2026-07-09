@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "856131168527",
+    "project_id": "intern-management-app-803ed",
+    "storage_bucket": "intern-management-app-803ed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856131168527:android:70f61143071f9815b4b67a",
+        "android_client_info": {
+          "package_name": "com.example.intern_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR1KXzoWIswX063xTvxtZg2X9FbiGZyGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
