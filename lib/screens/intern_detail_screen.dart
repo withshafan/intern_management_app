@@ -10,6 +10,7 @@ import '../widgets/animated_progress_ring.dart';
 import '../widgets/shimmer_loading.dart';
 import 'add_task_screen.dart';
 import 'task_detail_screen.dart';
+import 'edit_intern_screen.dart';
 
 class InternDetailScreen extends StatefulWidget {
   final Intern intern;
@@ -72,9 +73,10 @@ class _InternDetailScreenState extends State<InternDetailScreen> {
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  // Reusing AddInternScreen for edit by passing intern to it if supported, or we can build edit logic later in Phase 9 Forms
-                  // For now, let's keep it simple or implement EditInternScreen later
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Edit available in Phase 9')));
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => EditInternScreen(intern: widget.intern))
+                  );
                 },
               ),
             ],
