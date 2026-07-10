@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/intern_service.dart';
@@ -21,6 +22,38 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final InternService _internService = InternService();
   final TaskService _taskService = TaskService();
+
+  @override
+  void initState() {
+    super.initState();
+    _cleanupOrphanedTasks();
+  }
+
+  Future<void> _cleanupOrphanedTasks() async {
+    try {
+      final internsSnap = await FirebaseFirestore.instance.collection('interns').get();
+      final validInternIds = internsSnap.docs.map((d) => d.id).toSet();
+      
+      final tasksSnap = await FirebaseFirestore.instance.collection('tasks').get();
+      final batch = FirebaseFirestore.instance.batch();
+      int deletedCount = 0;
+      
+      for (var taskDoc in tasksSnap.docs) {
+        final internId = taskDoc.data()['internId'] as String?;
+        if (internId != null && !validInternIds.contains(internId)) {
+          batch.delete(taskDoc.reference);
+          deletedCount++;
+        }
+      }
+      
+      if (deletedCount > 0) {
+        await batch.commit();
+        debugPrint('Cleaned up $deletedCount orphaned tasks.');
+      }
+    } catch (e) {
+      debugPrint('Error cleaning up tasks: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
