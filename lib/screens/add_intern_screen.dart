@@ -22,6 +22,7 @@ class _AddInternScreenState extends State<AddInternScreen> {
   final _departmentController = TextEditingController();
   final _joinDateController = TextEditingController();
 
+  double _progress = 0.0;
   bool _isLoading = false;
 
   @override
@@ -83,7 +84,7 @@ class _AddInternScreenState extends State<AddInternScreen> {
         email: email,
         department: department,
         joinDate: joinDate,
-        progress: 0.0, // Default starting progress
+        progress: _progress, 
       );
 
       await _internService.addIntern(newIntern);
@@ -165,6 +166,40 @@ class _AddInternScreenState extends State<AddInternScreen> {
                       readOnly: true,
                       onTap: () => _selectDate(context),
                     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Initial Progress', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
+                              Text('${(_progress * 100).toInt()}%', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: AppColors.primary,
+                              inactiveTrackColor: AppColors.primary.withOpacity(0.2),
+                              thumbColor: AppColors.primary,
+                              overlayColor: AppColors.primary.withOpacity(0.2),
+                              trackHeight: 4,
+                            ),
+                            child: Slider(
+                              value: _progress,
+                              onChanged: (val) => setState(() => _progress = val),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 450.ms).slideY(begin: 0.2),
                     const SizedBox(height: 32),
                     PrimaryButton(
                       label: 'Save Intern',
