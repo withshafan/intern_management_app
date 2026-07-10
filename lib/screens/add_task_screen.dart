@@ -134,9 +134,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.background, Color(0xFF1A1A2E)],
+                colors: Theme.of(context).brightness == Brightness.dark 
+                    ? const [AppColors.background, Color(0xFF1A1A2E)]
+                    : const [AppColors.lightBackground, Color(0xFFE2E8F0)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

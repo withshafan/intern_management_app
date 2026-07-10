@@ -23,11 +23,14 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
       ),
       child: TextField(
         controller: controller,
@@ -35,11 +38,11 @@ class CustomTextField extends StatelessWidget {
         maxLines: maxLines,
         readOnly: readOnly,
         onTap: onTap,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: colorScheme.onSurface),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-          prefixIcon: Icon(icon, color: AppColors.primary),
+          labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
+          prefixIcon: Icon(icon, color: colorScheme.primary),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),

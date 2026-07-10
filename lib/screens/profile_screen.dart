@@ -79,8 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     valueListenable: themeNotifier,
                     builder: (context, currentMode, _) {
                       final isDark = currentMode == ThemeMode.dark;
+                      final onSurface = Theme.of(context).colorScheme.onSurface;
                       return ListTile(
-                        leading: Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: Colors.white),
+                        leading: Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: onSurface),
                         title: const Text('Dark Mode'),
                         trailing: Switch(
                           value: isDark,
@@ -92,9 +93,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     },
                   ),
-                  const Divider(color: Colors.white10),
+                  Divider(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
                   ListTile(
-                    leading: const Icon(Icons.notifications_active, color: Colors.white),
+                    leading: Icon(Icons.notifications_active, color: Theme.of(context).colorScheme.onSurface),
                     title: const Text('Push Notifications'),
                     trailing: Switch(
                       value: true,
@@ -105,6 +106,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideY(begin: 0.1),
+            const SizedBox(height: 16),
+            
+            // Made by withshafan
+            Center(
+              child: const Text(
+                'Made by withshafan',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w500,
+                ),
+              ).animate().fadeIn(delay: 200.ms),
+            ),
             const SizedBox(height: 16),
 
             // Danger Zone

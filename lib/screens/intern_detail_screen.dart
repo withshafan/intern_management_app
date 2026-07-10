@@ -35,9 +35,11 @@ class _InternDetailScreenState extends State<InternDetailScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.background, AppColors.cardBackground],
+                    colors: Theme.of(context).brightness == Brightness.dark 
+                        ? const [AppColors.background, AppColors.cardBackground]
+                        : const [AppColors.lightBackground, Color(0xFFE2E8F0)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
