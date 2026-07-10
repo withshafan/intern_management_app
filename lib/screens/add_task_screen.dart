@@ -34,6 +34,34 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.cardBackground,
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: AppColors.background,
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _dueDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
   Future<void> _saveTask() async {
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
@@ -139,8 +167,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _dueDateController,
-                      label: 'Due Date (e.g., 2025-07-15)',
+                      label: 'Due Date',
                       icon: Icons.calendar_today_outlined,
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
                     ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2),
                     const SizedBox(height: 32),
                     PrimaryButton(

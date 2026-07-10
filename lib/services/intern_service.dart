@@ -5,9 +5,18 @@ class InternService {
   final CollectionReference _internsCollection =
       FirebaseFirestore.instance.collection('interns');
 
-  // Create a new intern
-  Future<void> addIntern(Intern intern) async {
-    await _internsCollection.doc(intern.id).set(intern.toJson());
+  Future<Intern> addIntern(Intern intern) async {
+    final docRef = intern.id.isEmpty ? _internsCollection.doc() : _internsCollection.doc(intern.id);
+    final internWithId = Intern(
+      id: docRef.id,
+      name: intern.name,
+      email: intern.email,
+      department: intern.department,
+      joinDate: intern.joinDate,
+      progress: intern.progress,
+    );
+    await docRef.set(internWithId.toJson());
+    return internWithId;
   }
 
   // Update an existing intern

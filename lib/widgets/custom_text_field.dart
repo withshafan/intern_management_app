@@ -7,6 +7,8 @@ class CustomTextField extends StatelessWidget {
   final IconData icon;
   final TextInputType keyboardType;
   final int maxLines;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextField({
     super.key,
@@ -15,6 +17,8 @@ class CustomTextField extends StatelessWidget {
     required this.icon,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -29,6 +33,8 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
+        readOnly: readOnly,
+        onTap: onTap,
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,

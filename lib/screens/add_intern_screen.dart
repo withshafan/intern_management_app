@@ -33,6 +33,34 @@ class _AddInternScreenState extends State<AddInternScreen> {
     super.dispose();
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.cardBackground,
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: AppColors.background,
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _joinDateController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
   Future<void> _saveIntern() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
@@ -130,8 +158,10 @@ class _AddInternScreenState extends State<AddInternScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _joinDateController,
-                      label: 'Join Date (e.g. 2025-07-01)',
+                      label: 'Join Date',
                       icon: Icons.calendar_today_outlined,
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
                     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
                     const SizedBox(height: 32),
                     PrimaryButton(
