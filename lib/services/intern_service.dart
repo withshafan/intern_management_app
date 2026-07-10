@@ -24,9 +24,25 @@ class InternService {
     await _internsCollection.doc(intern.id).update(intern.toJson());
   }
 
-  // Delete an intern
+  // Delete an intern and all their associated tasks
   Future<void> deleteIntern(String id) async {
-    await _internsCollection.doc(id).delete();
+    final batch = FirebaseFirestore.instance.batch();
+    
+    // Delete the intern document
+    batch.delete(_internsCollection.doc(id));
+    
+    // Find and delete all tasks associated with this intern
+    final tasksSnapshot = await FirebaseFirestore.instance
+        .collection('tasks')
+        .where('internId', isEqualTo: id)
+        .get();
+        
+    for (var doc in tasksSnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    
+    // Commit the batch
+    await batch.commit();
   }
 
   // Get a single intern by ID
