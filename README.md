@@ -107,15 +107,6 @@ lib/
    flutter run
    ```
 
-## 📱 Screenshots
-
-*(Add your beautiful app screenshots here)*
-<div align="center">
-  <img src="https://via.placeholder.com/250x500.png?text=Login" width="200"/>
-  <img src="https://via.placeholder.com/250x500.png?text=Dashboard" width="200"/>
-  <img src="https://via.placeholder.com/250x500.png?text=Task+Details" width="200"/>
-</div>
-
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/withshafan/intern_job_portal/issues).
 

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_service.dart';
+import '../widgets/glass_card.dart';
+import '../theme/app_colors.dart';
+import '../main.dart' show themeNotifier;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,13 +19,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _auth.signOut();
       if (mounted) {
-        // Navigate back to login screen (or splash)
         Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error signing out: ${e.toString()}')),
+          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -31,49 +34,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = _auth.currentUser;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      appBar: AppBar(title: const Text('Profile')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.blue,
-              child: Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.white,
+            // User Avatar Header
+            GlassCard(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(color: AppColors.primary.withOpacity(0.5), blurRadius: 20, spreadRadius: 2),
+                      ],
+                    ),
+                    child: const CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.primary,
+                      child: Icon(Icons.person, size: 50, color: Colors.white),
+                    ),
+                  ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
+                  const SizedBox(height: 16),
+                  Text(
+                    user?.email ?? 'Admin User',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ).animate().fadeIn(delay: 200.ms),
+                  const SizedBox(height: 4),
+                  const Text('System Administrator', style: TextStyle(color: Colors.grey)).animate().fadeIn(delay: 300.ms),
+                ],
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              user?.email ?? 'No email',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Signed in with Email/Password',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _signOut,
-                icon: const Icon(Icons.logout),
-                label: const Text('Sign Out'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
+            const SizedBox(height: 16),
+
+            // Settings Section
+            GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Preferences', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                  const SizedBox(height: 16),
+                  ValueListenableBuilder<ThemeMode>(
+                    valueListenable: themeNotifier,
+                    builder: (context, currentMode, _) {
+                      final isDark = currentMode == ThemeMode.dark;
+                      return ListTile(
+                        leading: Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: Colors.white),
+                        title: const Text('Dark Mode'),
+                        trailing: Switch(
+                          value: isDark,
+                          activeColor: AppColors.primary,
+                          onChanged: (val) {
+                            themeNotifier.value = val ? ThemeMode.dark : ThemeMode.light;
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(color: Colors.white10),
+                  ListTile(
+                    leading: const Icon(Icons.notifications_active, color: Colors.white),
+                    title: const Text('Push Notifications'),
+                    trailing: Switch(
+                      value: true,
+                      activeColor: AppColors.primary,
+                      onChanged: (val) {},
+                    ),
+                  ),
+                ],
               ),
-            ),
+            ).animate().fadeIn(delay: 150.ms, duration: 400.ms).slideY(begin: 0.1),
+            const SizedBox(height: 16),
+
+            // Danger Zone
+            GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.danger)),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: const Icon(Icons.logout, color: AppColors.danger),
+                    title: const Text('Sign Out', style: TextStyle(color: AppColors.danger)),
+                    onTap: _signOut,
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 250.ms, duration: 400.ms).slideY(begin: 0.1),
           ],
         ),
       ),

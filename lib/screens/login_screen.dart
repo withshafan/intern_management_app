@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_service.dart';
-import 'home_screen.dart';
+import '../widgets/glass_card.dart';
+import '../theme/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,22 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   String _errorMessage = '';
 
   Future<void> _login() async {
-    // Clear previous error
-    setState(() {
-      _errorMessage = '';
-    });
-
-    // Basic validation
+    setState(() => _errorMessage = '');
     if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Please fill in all fields.';
-      });
+      setState(() => _errorMessage = 'Please fill in all fields.');
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final user = await _auth.signInWithEmailAndPassword(
@@ -41,22 +34,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (user != null && mounted) {
-        // Navigate to HomeScreen and remove login screen from back stack
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString().replaceFirst('Exception: ', '');
-      });
+      setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -70,89 +53,72 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // App logo/title
-            const Icon(
-              Icons.person_outline,
-              size: 80,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Intern Management',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 40),
-
-            // Email field
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              enabled: !_isLoading,
-            ),
-            const SizedBox(height: 16),
-
-            // Password field
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-              obscureText: true,
-              enabled: !_isLoading,
-              onSubmitted: (_) => _login(), // press enter to login
-            ),
-            const SizedBox(height: 24),
-
-            // Error message
-            if (_errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-
-            // Login button
-            ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.person_outline, size: 80, color: AppColors.primary)
+                  .animate().fade().scale(),
+              const SizedBox(height: 16),
+              Text(
+                'Welcome Back',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayMedium,
+              ).animate().fade(delay: 200.ms).slideY(begin: 0.5),
+              const SizedBox(height: 40),
+              GlassCard(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email),
                       ),
-                    )
-                  : const Text('Login', style: TextStyle(fontSize: 18)),
-            ),
-          ],
+                      keyboardType: TextInputType.emailAddress,
+                      enabled: !_isLoading,
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                      obscureText: true,
+                      enabled: !_isLoading,
+                      onSubmitted: (_) => _login(),
+                    ),
+                    if (_errorMessage.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(_errorMessage, style: const TextStyle(color: AppColors.danger)),
+                    ],
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fade(delay: 400.ms).slideY(begin: 0.2),
+            ],
+          ),
         ),
       ),
     );

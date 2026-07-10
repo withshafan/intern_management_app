@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_service.dart';
-import 'login_screen.dart';
-import 'home_screen.dart';
+import '../theme/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,20 +17,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Check auth state after a short delay (simulate loading)
     Future.delayed(const Duration(seconds: 2), () {
       if (!mounted) return;
       final user = _auth.currentUser;
       if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/login');
       }
     });
   }
@@ -42,17 +36,15 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(
-              Icons.people,
+              Icons.manage_accounts,
               size: 80,
-              color: Colors.blue,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Intern Management System',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 40),
-            const CircularProgressIndicator(),
+              color: AppColors.primary,
+            ).animate().fade(duration: 500.ms).scale(delay: 200.ms),
+            const SizedBox(height: 24),
+            Text(
+              'Intern Management',
+              style: Theme.of(context).textTheme.displayMedium,
+            ).animate().fade(delay: 400.ms).slideY(begin: 0.5),
           ],
         ),
       ),
